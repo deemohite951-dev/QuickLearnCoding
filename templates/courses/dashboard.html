@@ -7,7 +7,6 @@
     <h2 class="fw-bold mb-4">Welcome back, {{ user.username }}!</h2>
 
     <div class="row g-4">
-        <!-- Courses Progress List -->
         <div class="col-lg-8">
             <h4 class="fw-bold mb-3">Enrolled Courses</h4>
             {% for item in dashboard_data %}
@@ -28,10 +27,17 @@
                     <div class="progress-bar bg-primary" role="progressbar" style="width: {{ item.percent }}%;"></div>
                 </div>
 
-                <div class="d-flex justify-content-between align-items-center mt-2">
-                    <a href="{% url 'courses:day_detail' item.course.slug item.next_day %}" class="btn btn-primary">
-                        {% if item.is_finished %}Review Course{% else %}Continue Day {{ item.next_day }}{% endif %}
-                    </a>
+                <div class="d-flex justify-content-between align-items-center mt-2 flex-wrap gap-2">
+                    <div>
+                        {% if item.is_finished and item.certificate %}
+                            <a href="{% url 'courses:view_certificate' item.certificate.certificate_code %}" class="btn btn-success me-2">
+                                <i class="bi bi-award-fill"></i> View Certificate
+                            </a>
+                        {% endif %}
+                        <a href="{% url 'courses:day_detail' item.course.slug item.next_day %}" class="btn btn-primary">
+                            {% if item.is_finished %}Review Course{% else %}Continue Day {{ item.next_day }}{% endif %}
+                        </a>
+                    </div>
                     <a href="{% url 'courses:course_detail' item.course.slug %}" class="btn btn-outline-secondary btn-sm">Full Syllabus</a>
                 </div>
             </div>
@@ -45,7 +51,6 @@
             {% endfor %}
         </div>
 
-        <!-- Recent Quiz Scores -->
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm p-4">
                 <h5 class="fw-bold mb-3"><i class="bi bi-award text-warning"></i> Recent Quiz Attempts</h5>

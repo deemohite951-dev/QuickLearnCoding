@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
@@ -67,3 +68,22 @@ class LessonProgress(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - Day {self.day.day_number} ({'Done' if self.is_completed else 'Pending'})"
+
+
+class Certificate(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='certificates')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='certificates')
+    certificate_code = models.CharField(max_length=50, unique=True, blank=True, editable=False)
+    issued_at = models.DateTimeField(auto_now_add=True)
+    certificate_image = models.ImageField(upload_to='certificates/', blank=True, null=True)
+
+    class Meta:
+        unique_together = ('user', 'course')
+
+    def save(self, *args, **kwargs):
+        if not self.certificate_code:
+            self.certificate_code = f"CERT-{uuid.uuid4().hex[:10].upper()}"
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Certificate: {self.user.username} - {self.course.title}"

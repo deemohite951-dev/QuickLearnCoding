@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Certificate - {{ certificate.certificate_code }}{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                <div class="text-start">
+                    <h2 class="fw-bold mb-0">Official Course Certificate</h2>
+                    <small class="text-muted">Verification ID: {{ certificate.certificate_code }}</small>
+                </div>
+                <div>
+                    {% if certificate.certificate_image %}
+                    <a href="{{ certificate.certificate_image.url }}" download class="btn btn-outline-primary me-2">
+                        <i class="bi bi-download"></i> Download Image
+                    </a>
+                    {% endif %}
+                    <button onclick="window.print()" class="btn btn-primary">
+                        <i class="bi bi-printer"></i> Print Certificate
+                    </button>
+                </div>
+            </div>
+
+            <div class="card shadow border-0 overflow-hidden mb-4">
+                {% if certificate.certificate_image %}
+                    <img src="{{ certificate.certificate_image.url }}" class="img-fluid w-100" alt="Certificate of Completion">
+                {% else %}
+                    <div class="p-5 text-muted">
+                        <h5>Certificate is generating...</h5>
+                        <p class="mb-0">Please refresh this page in a moment.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="text-start">
+                <a href="{% url 'courses:dashboard' %}" class="btn btn-secondary">&larr; Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

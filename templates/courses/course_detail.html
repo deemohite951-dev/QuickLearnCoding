@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card border-0 shadow-sm p-4 mb-4">
+        <h1 class="fw-bold">{{ course.title }}</h1>
+        <p class="lead text-muted">{{ course.description }}</p>
+        <div class="mt-2">
+            {% if is_enrolled %}
+                <a href="{% url 'courses:day_detail' course.slug 1 %}" class="btn btn-success">Continue Learning</a>
+            {% else %}
+                <a href="{% url 'courses:enroll' course.slug %}" class="btn btn-primary px-4">Enroll in this 30-Day Course</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <h3 class="fw-bold mb-3">30-Day Syllabus</h3>
+    <div class="list-group shadow-sm">
+        {% for day in days %}
+        <a href="{% url 'courses:day_detail' course.slug day.day_number %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center py-3">
+            <div>
+                <span class="badge bg-secondary me-2">Day {{ day.day_number }}</span>
+                <strong>{{ day.title }}</strong>
+            </div>
+            <i class="bi bi-chevron-right text-muted"></i>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

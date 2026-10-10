@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}Day {{ day.day_number }}: {{ day.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'courses:course_detail' course.slug %}">{{ course.title }}</a></li>
+            <li class="breadcrumb-item active">Day {{ day.day_number }}</li>
+        </ol>
+    </nav>
+
+    <div class="card border-0 shadow-sm p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+            <div>
+                <span class="badge bg-primary fs-6">Day {{ day.day_number }}</span>
+                <h2 class="fw-bold mt-2">{{ day.title }}</h2>
+            </div>
+            <div>
+                {% if progress.is_completed %}
+                    <span class="badge bg-success p-2"><i class="bi bi-check-circle-fill"></i> Completed</span>
+                {% else %}
+                    <form method="POST" action="{% url 'courses:mark_complete' course.slug day.day_number %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-success">
+                            <i class="bi bi-check2"></i> Mark as Completed
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Learning Objectives -->
+        <div class="card bg-light border-0 p-3 mb-4">
+            <h5 class="fw-bold mb-2"><i class="bi bi-bullseye text-primary"></i> Learning Objectives</h5>
+            <ul class="mb-0 ps-3">
+                {% for obj in day.objectives.splitlines %}
+                    {% if obj %}<li>{{ obj }}</li>{% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Rich Content -->
+        <div class="lesson-content mb-4 fs-5" style="line-height: 1.8;">
+            {{ day.content|linebreaks }}
+        </div>
+
+        <!-- Code Snippet -->
+        {% if day.code_snippet %}
+        <h5 class="fw-bold"><i class="bi bi-code-slash text-primary"></i> Code Example</h5>
+        <pre class="bg-dark text-white p-3 rounded-3 overflow-auto"><code>{{ day.code_snippet }}</code></pre>
+        {% endif %}
+
+        <!-- Practice Tasks -->
+        {% if day.practice_tasks %}
+        <div class="card border-info-subtle bg-info-subtle p-3 my-3">
+            <h5 class="fw-bold text-dark"><i class="bi bi-pencil-square"></i> Practice Tasks</h5>
+            <div class="text-dark">{{ day.practice_tasks|linebreaks }}</div>
+        </div>
+        {% endif %}
+
+        <!-- Video Resource -->
+        {% if day.video_url %}
+        <div class="my-3">
+            <h5 class="fw-bold"><i class="bi bi-camera-video text-danger"></i> Recommended Video</h5>
+            <a href="{{ day.video_url }}" target="_blank" rel="noopener" class="btn btn-outline-danger">
+                <i class="bi bi-youtube"></i> Watch Video Lecture
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- Downloadable Attachment -->
+        {% if day.file %}
+        <div class="my-3">
+            <h5 class="fw-bold"><i class="bi bi-file-earmark-arrow-down text-primary"></i> Resource Material</h5>
+            <a href="{{ day.file.url }}" download class="btn btn-outline-secondary">Download Lesson Material</a>
+        </div>
+        {% endif %}
+
+        <!-- Day Quiz -->
+        {% if has_quiz %}
+        <div class="card border-0 bg-primary-subtle p-4 mt-4 text-center">
+            <h4 class="fw-bold">Ready to test your knowledge?</h4>
+            <p class="text-muted">Take the 5-question Day {{ day.day_number }} quiz to check your understanding.</p>
+            <div>
+                <a href="{% url 'quizzes:quiz_detail' day.quiz.id %}" class="btn btn-primary px-4">Take Quiz</a>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Navigation Buttons -->
+        <div class="d-flex justify-content-between align-items-center mt-5 pt-3 border-top">
+            {% if prev_day %}
+                <a href="{% url 'courses:day_detail' course.slug prev_day.day_number %}" class="btn btn-outline-secondary">
+                    &larr; Day {{ prev_day.day_number }}: {{ prev_day.title|truncatechars:20 }}
+                </a>
+            {% else %}
+                <div></div>
+            {% endif %}
+
+            {% if next_day %}
+                <a href="{% url 'courses:day_detail' course.slug next_day.day_number %}" class="btn btn-primary">
+                    Day {{ next_day.day_number }}: {{ next_day.title|truncatechars:20 }} &rarr;
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Quiz Results - {{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm p-4 text-center mb-4">
+                <h2 class="fw-bold">Your Score: {{ score }}%</h2>
+                <p class="lead">You got {{ correct_count }} out of {{ total_questions }} correct.</p>
+                {% if passed %}
+                    <div class="alert alert-success d-inline-block px-4 py-2 mx-auto">
+                        <i class="bi bi-check-circle-fill"></i> Passed! Well done on mastering today's concepts.
+                    </div>
+                {% else %}
+                    <div class="alert alert-danger d-inline-block px-4 py-2 mx-auto">
+                        <i class="bi bi-x-circle-fill"></i> Needs improvement. Review the lesson and try again!
+                    </div>
+                {% endif %}
+                <div class="mt-3">
+                    <a href="{% url 'quizzes:quiz_detail' quiz.id %}" class="btn btn-outline-primary me-2">Retake Quiz</a>
+                    <a href="{% url 'courses:day_detail' day.course.slug day.day_number %}" class="btn btn-primary">Return to Lesson</a>
+                </div>
+            </div>
+
+            <h4 class="fw-bold mb-3">Review & Explanations</h4>
+            {% for item in breakdown %}
+            <div class="card mb-3 border-0 shadow-sm p-3">
+                <p class="fw-bold mb-1">{{ forloop.counter }}. {{ item.question }}</p>
+                <p class="mb-1 small"><strong>Your Answer:</strong> <span class="{% if item.is_correct %}text-success{% else %}text-danger{% endif %}">{{ item.selected }}</span></p>
+                {% if not item.is_correct %}
+                <p class="mb-1 small"><strong>Correct Answer:</strong> <span class="text-success">{{ item.correct_answer }}</span></p>
+                {% endif %}
+                {% if item.explanation %}
+                <p class="text-muted small mt-2 mb-0 bg-light p-2 rounded">
+                    <strong>Explanation:</strong> {{ item.explanation }}
+                </p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

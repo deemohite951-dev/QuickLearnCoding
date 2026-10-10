@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm text-center p-4">
+                <div class="mb-3">
+                    {% if profile.profile_picture %}
+                        <img src="{{ profile.profile_picture.url }}" class="rounded-circle img-fluid" style="width: 130px; height: 130px; object-fit: cover;">
+                    {% else %}
+                        <div class="rounded-circle bg-secondary text-white d-inline-flex align-items-center justify-content-center" style="width: 130px; height: 130px; font-size: 3rem;">
+                            {{ user.username|first|upper }}
+                        </div>
+                    {% endif %}
+                </div>
+                <h4 class="fw-bold mb-0">{{ profile.full_name|default:user.username }}</h4>
+                <p class="text-muted">@{{ user.username }}</p>
+                <p class="small text-secondary">{{ profile.bio|default:"No bio provided yet." }}</p>
+
+                <hr>
+
+                <div class="d-flex justify-content-around text-center">
+                    <div>
+                        <h5 class="fw-bold mb-0 text-primary">{{ enrollments.count }}</h5>
+                        <small class="text-muted">Enrolled</small>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-0 text-success">{{ completed_days_count }}</h5>
+                        <small class="text-muted">Lessons Completed</small>
+                    </div>
+                </div>
+
+                {% if completed_days_count >= 30 %}
+                <div class="mt-4 alert alert-success text-center">
+                    <i class="bi bi-award-fill text-warning fs-3"></i>
+                    <h6 class="fw-bold mt-1">Python Mastery Badge Earned!</h6>
+                    <small>Completed 30 days of continuous learning.</small>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm p-4">
+                <h4 class="fw-bold mb-4">Edit Profile</h4>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

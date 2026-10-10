@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ quiz.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm p-4">
+                <h3 class="fw-bold mb-1">{{ quiz.title }}</h3>
+                <p class="text-muted mb-4">Answer all questions and submit to check your score. Passing score is {{ quiz.passing_score }}%.</p>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    {% for q in quiz.questions.all %}
+                    <div class="card mb-3 p-3 bg-light border-0">
+                        <p class="fw-bold mb-2">{{ forloop.counter }}. {{ q.question_text }}</p>
+                        {% for opt in q.options.all %}
+                        <div class="form-check my-2">
+                            <input class="form-check-input" type="radio" name="question_{{ q.id }}" id="opt_{{ opt.id }}" value="{{ opt.id }}" required>
+                            <label class="form-check-label" for="opt_{{ opt.id }}">{{ opt.option_text }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+
+                    <div class="mt-4 text-end">
+                        <a href="{% url 'courses:day_detail' quiz.day.course.slug quiz.day.day_number %}" class="btn btn-outline-secondary me-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4">Submit Answers</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Master New Skills Structured{% endblock %}
+
+{% block content %}
+<section class="py-5 text-center bg-white border-bottom">
+    <div class="container py-4">
+        <h1 class="display-4 fw-bold">Master Any Tech Skill in <span class="text-primary">30 Days</span></h1>
+        <p class="lead text-muted col-lg-8 mx-auto mt-3">
+            One focused lesson a day, curated code snippets, daily practice exercises, and immediate quizzes to cement your real-world skills.
+        </p>
+        <div class="mt-4">
+            {% if user.is_authenticated %}
+                <a href="{% url 'courses:dashboard' %}" class="btn btn-primary btn-lg px-4 me-2">Go to My Dashboard</a>
+            {% else %}
+                <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg px-4 me-2">Start Learning Free</a>
+                <a href="{% url 'accounts:login' %}" class="btn btn-outline-secondary btn-lg px-4">Sign In</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<div class="container py-5">
+    <h3 class="fw-bold mb-4">Featured Courses</h3>
+    <div class="row g-4">
+        {% for course in featured_courses %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body d-flex flex-column">
+                    <span class="badge bg-primary-subtle text-primary mb-2 align-self-start">30 Days Structured</span>
+                    <h5 class="card-title fw-bold">{{ course.title }}</h5>
+                    <p class="card-text text-muted flex-grow-1">{{ course.description|truncatewords:20 }}</p>
+                    <a href="{% url 'courses:course_detail' course.slug %}" class="btn btn-outline-primary mt-3">View Syllabus & Start</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center text-muted">
+            <p>No published courses available yet. Seed the database to view "Python in 30 Days".</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
